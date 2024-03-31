@@ -1,0 +1,6 @@
+**/__pycache__/
+*.pyc
+*.swp
+file.json
+template.html
+venv/
