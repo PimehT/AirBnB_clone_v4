@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ states module for the API """
 from api.v1.views import app_views
-from flask import jsonify, make_response
+from flask import jsonify, make_response, request
 from models import storage
 from models.state import State
 
@@ -15,7 +15,7 @@ def get_states():
     return jsonify(states_list)
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False, methods=['GET'])
+@app_views.route('/states/<state_id>', methods=['GET'])
 def get_state(state_id):
     state = storage.get(State, state_id)
     if not state:
@@ -23,7 +23,7 @@ def get_state(state_id):
     return jsonify(state.to_dict())
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False, methods=['DELETE'])
+@app_views.route('/states/<state_id>', methods=['DELETE'])
 def delete_state(state_id):
     state = storage.get(State, state_id)
     if not state:
@@ -35,8 +35,6 @@ def delete_state(state_id):
 
 @app_views.route('/states/', strict_slashes=False, methods=['POST'])
 def post_state():
-    from flask import request
-
     data = request.get_json()
     if not data:
         return jsonify({"error": "Not a JSON"}), 400
@@ -47,10 +45,8 @@ def post_state():
     return make_response(jsonify(state.to_dict()), 201)
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False, methods=['PUT'])
+@app_views.route('/states/<state_id>', methods=['PUT'])
 def put_state(state_id):
-    from flask import request
-
     state = storage.get(State, state_id)
     if not state:
         return jsonify({"error": "Not found"}), 404
