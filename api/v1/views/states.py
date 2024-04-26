@@ -15,7 +15,7 @@ def get_states():
     for state in states.values():
         states_list.append(state.to_dict())
     response = Response(
-        response=json.dumps(states_list, indent=4),
+        response=json.dumps(states_list, indent=2),
         status=200,
         mimetype='application/json'
     )
@@ -26,9 +26,9 @@ def get_states():
 def get_state(state_id):
     state = storage.get(State, state_id)
     if state is None:
-        return jsonify({"error": "Not found"}), 404
+        return json.dumps({"error": "Not found"}, indent=2), 404
     response = Response(
-        response=json.dumps(state.to_dict(), indent=4),
+        response=json.dumps(state.to_dict(), indent=2),
         status=200,
         mimetype='application/json'
     )
@@ -39,7 +39,7 @@ def get_state(state_id):
 def delete_state(state_id):
     state = storage.get(State, state_id)
     if state is None:
-        return jsonify({"error": "Not found"}), 404
+        return json.dumps({"error": "Not found"}, indent=2), 404
     storage.delete(state)
     storage.save()
     return jsonify({}), 200
@@ -51,12 +51,17 @@ def post_state():
 
     data = request.get_json()
     if data is None:
-        return jsonify({"error": "Not a JSON"}), 400
+        return json.dumps({"error": "Not a JSON"}, indent=2), 400
     if 'name' not in data:
-        return jsonify({"error": "Missing name"}), 400
+        return json.dumps({"error": "Missing name"}, indent=2), 400
     state = State(**data)
     state.save()
-    return jsonify(state.to_dict()), 201
+    response = Response(
+        response=json.dumps(state.to_dict(), indent=2),
+        status=201,
+        mimetype='application/json'
+    )
+    return response, 201
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'])
@@ -65,12 +70,17 @@ def put_state(state_id):
 
     state = storage.get(State, state_id)
     if state is None:
-        return jsonify({"error": "Not found"}), 404
+        return json.dumps({"error": "Not found"}, indent=2), 404
     data = request.get_json()
     if data is None:
-        return jsonify({"error": "Not a JSON"}), 400
+        return json.dumps({"error": "Not a JSON"}, indent=2), 400
     for key, value in data.items():
         if key not in ['id', 'created_at', 'updated_at']:
             setattr(state, key, value)
     state.save()
-    return jsonify(state.to_dict()), 200
+    response = Response(
+        response=json.dumps(state.to_dict(), indent=2),
+        status=200,
+        mimetype='application/json'
+    )
+    return response, 200
