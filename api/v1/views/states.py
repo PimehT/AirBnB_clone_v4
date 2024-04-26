@@ -18,7 +18,7 @@ def get_states():
 @app_views.route('/states/<state_id>', methods=['GET'])
 def get_state(state_id):
     state = storage.get(State, state_id)
-    if state is None:
+    if not state:
         return jsonify({"error": "Not found"}), 404
     return jsonify(state.to_dict())
 
@@ -26,7 +26,7 @@ def get_state(state_id):
 @app_views.route('/states/<state_id>', methods=['DELETE'])
 def delete_state(state_id):
     state = storage.get(State, state_id)
-    if state is None:
+    if not state:
         return jsonify({"error": "Not found"}), 404
     storage.delete(state)
     storage.save()
@@ -38,7 +38,7 @@ def post_state():
     from flask import request
 
     data = request.get_json()
-    if data is None:
+    if not data:
         return jsonify({"error": "Not a JSON"}), 400
     if 'name' not in data:
         return jsonify({"error": "Missing name"}), 400
@@ -52,10 +52,10 @@ def put_state(state_id):
     from flask import request
 
     state = storage.get(State, state_id)
-    if state is None:
+    if not state:
         return jsonify({"error": "Not found"}), 404
     data = request.get_json()
-    if data is None:
+    if not data:
         return jsonify({"error": "Not a JSON"}), 400
     for key, value in data.items():
         if key not in ['id', 'created_at', 'updated_at']:
