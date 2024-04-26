@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ states module for the API """
 from api.v1.views import app_views
-from flask import jsonify
+from flask import jsonify, make_response
 from models import storage
 from models.state import State
 
@@ -30,7 +30,7 @@ def delete_state(state_id):
         return jsonify({"error": "Not found"}), 404
     storage.delete(state)
     storage.save()
-    return jsonify({}), 200
+    return jsonify({})
 
 
 @app_views.route('/states/', strict_slashes=False, methods=['POST'])
@@ -44,7 +44,7 @@ def post_state():
         return jsonify({"error": "Missing name"}), 400
     state = State(**data)
     state.save()
-    return jsonify(state.to_dict()), 201
+    return make_response(jsonify(state.to_dict()), 201)
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'])
@@ -61,4 +61,4 @@ def put_state(state_id):
         if key not in ['id', 'created_at', 'updated_at']:
             setattr(state, key, value)
     state.save()
-    return jsonify(state.to_dict()), 200
+    return jsonify(state.to_dict())
