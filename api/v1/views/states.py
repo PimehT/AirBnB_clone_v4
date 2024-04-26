@@ -2,6 +2,8 @@
 """ states module for the API """
 from api.v1.views import app_views
 from flask import jsonify
+from flask import Response
+import json
 from models import storage
 from models.state import State
 
@@ -12,7 +14,12 @@ def get_states():
     states_list = []
     for state in states.values():
         states_list.append(state.to_dict())
-    return jsonify(states_list)
+    response = Response(
+        response=json.dumps(states_list, indent=4),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 
 @app_views.route('/states/<state_id>', methods=['GET'])
@@ -20,7 +27,12 @@ def get_state(state_id):
     state = storage.get(State, state_id)
     if state is None:
         return jsonify({"error": "Not found"}), 404
-    return jsonify(state.to_dict())
+    response = Response(
+        response=json.dumps(state.to_dict(), indent=4),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 
 @app_views.route('/states/<state_id>', methods=['DELETE'])
@@ -49,8 +61,6 @@ def post_state():
 
 @app_views.route('/states/<state_id>', methods=['PUT'])
 def put_state(state_id):
-    from models import storage
-    from models.state import State
     from flask import request
 
     state = storage.get(State, state_id)
