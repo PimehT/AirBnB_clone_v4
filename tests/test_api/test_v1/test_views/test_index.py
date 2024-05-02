@@ -3,17 +3,13 @@
 import unittest
 import os
 import pycodestyle
-from tests.test_api.test_v1.base_test import BaseTestCase
-
-os.environ['HBNB_MYSQL_DB'] = 'hbnb_test_db'
-
-from api.v1 import app as app_py
+from tests.test_api.test_v1.base_test import BaseTestCase, TestData
 from api.v1.views import index
 
 class TestIndexDocs(unittest.TestCase):
     """Checks that the documentation and style of index.py."""
 
-    def test_pep8_conformance_app(self):
+    def test_pep8_conformance_index(self):
         """Test that api/v1/views/index.py conforms to PEP8."""
         pep8s = pycodestyle.StyleGuide(quiet=True)
         result = pep8s.check_files(['api/v1/views/index.py'])
@@ -45,5 +41,8 @@ class TestIndex(BaseTestCase):
         from models.place import Place
         from models.review import Review
         from models.user import User
-
-
+        
+        test_obj = TestData(self.storage)
+        
+        resp = self.client.get('/api/v1/stats')
+        self.assertEqual(resp.json, test_obj.counter)
