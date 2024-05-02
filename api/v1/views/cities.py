@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ cities module for the API """
 from api.v1.views import app_views
-from flask import jsonify
+from flask import jsonify, request
 from models import storage
 from models.city import City
 from models.state import State
@@ -38,13 +38,11 @@ def delete_city(city_id):
 @app_views.route('/states/<state_id>/cities', strict_slashes=False,
                  methods=['POST'])
 def create_city(state_id):
-    from flask import request
-
     state = storage.get(State, state_id)
     if state is None:
         return jsonify({"error": "Not found"}), 404
-    data = request.get_json()
-    if data is None:
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
         return jsonify({"error": "Not a JSON"}), 400
     if 'name' not in data:
         return jsonify({"error": "Missing name"}), 400
@@ -56,13 +54,11 @@ def create_city(state_id):
 
 @app_views.route('/cities/<city_id>', methods=['PUT'])
 def update_city(city_id):
-    from flask import request
-
     city = storage.get(City, city_id)
     if city is None:
         return jsonify({"error": "Not found"}), 404
-    data = request.get_json()
-    if data is None:
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
         return jsonify({"error": "Not a JSON"}), 400
     for key, value in data.items():
         if key not in ['id', 'state_id', 'created_at', 'updated_at']:
