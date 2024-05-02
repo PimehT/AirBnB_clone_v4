@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ amenities module for the API """
 from api.v1.views import app_views
-from flask import jsonify
+from flask import jsonify, request
 from models import storage
 from models.amenity import Amenity
 
@@ -33,10 +33,8 @@ def delete_amenity(amenity_id):
 
 @app_views.route('/amenities', strict_slashes=False, methods=['POST'])
 def create_amenity():
-    from flask import request
-
-    data = request.get_json()
-    if data is None:
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
         return jsonify({"error": "Not a JSON"}), 400
     if 'name' not in data:
         return jsonify({"error": "Missing name"}), 400
@@ -47,13 +45,11 @@ def create_amenity():
 
 @app_views.route('/amenities/<amenity_id>', methods=['PUT'])
 def update_amenity(amenity_id):
-    from flask import request
-
     amenity = storage.get(Amenity, amenity_id)
     if amenity is None:
         return jsonify({"error": "Not found"}), 404
-    data = request.get_json()
-    if data is None:
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
         return jsonify({"error": "Not a JSON"}), 400
     for key, value in data.items():
         if key not in ['id', 'created_at', 'updated_at']:
