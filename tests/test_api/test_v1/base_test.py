@@ -2,9 +2,6 @@
 """Base test case from which other tests shall inherit."""
 import os
 import unittest
-
-os.environ['HBNB_ENV'] = 'test'
-
 from models.engine.file_storage import FileStorage
 from api.v1 import app as app_py
 from models import storage, TEST_PATH
@@ -40,7 +37,7 @@ class BaseTestCase(unittest.TestCase):
         # clear the file.json
         if os.path.isfile(TEST_PATH):
             os.remove(TEST_PATH)
- 
+
     def setUp(self):
         """Create client."""
         # reload data from database/file.json
@@ -57,7 +54,7 @@ class BaseTestCase(unittest.TestCase):
         # clear the file.json
         if os.path.isfile(TEST_PATH):
             os.remove(TEST_PATH)
-        
+
 
 class TestData:
     """Class to create and describe test data."""
@@ -152,7 +149,7 @@ class TestData:
         r5 = Review(id=str(uuid.uuid4()), created_at=datetime.utcnow(),
                     updated_at=datetime.utcnow(), place_id=p5.id,
                     user_id=u2.id, text="review_5")
-        
+
         self.objects = (
             s1, s2,
             u1, u2, u3,
@@ -189,11 +186,9 @@ class TestData:
 
         self.counter = counter
 
-
     def save_objects(self, objects, storage_obj):
         storage_obj.reload()
         for obj in objects:
-            #obj.updated_at = datetime.utcnow()
             storage_obj.new(obj)
         storage_obj.save()
 
@@ -204,4 +199,3 @@ class TestData:
             if obj.__class__.__name__ == cls:
                 ret.append(obj)
         return ret
-        

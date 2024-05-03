@@ -6,9 +6,6 @@ import os
 import unittest
 import pycodestyle
 from tests.test_api.test_v1.base_test import BaseTestCase
-
-os.environ['HBNB_MYSQL_DB'] = 'hbnb_test_db'
-
 from api.v1 import app as app_py
 
 
