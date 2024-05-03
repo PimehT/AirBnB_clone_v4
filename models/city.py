@@ -14,7 +14,17 @@ class City(BaseModel, Base):
         __tablename__ = 'cities'
         state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
         name = Column(String(128), nullable=False)
-        places = relationship("Place", backref="city") # changed cities to city
+        places = relationship("Place", backref="city",
+                              cascade="all, delete-orphan")
     else:
         state_id = ""
         name = ""
+
+    if models.storage_t != "db":
+        @property
+        def places(self):
+            places = []
+            for place in models.storage.all(models.place.Place).values():
+                if place.city_id == self.id:
+                    places.append(place)
+            return places
