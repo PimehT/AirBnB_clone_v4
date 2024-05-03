@@ -21,33 +21,30 @@ import uuid
 from collections import Counter
 import inspect
 
+storage.reload()
+
 
 class BaseTestCase(unittest.TestCase):
     """Base class for all tests."""
 
     @classmethod
     def setUpClass(cls):
-        """
-        set up
-        """
+        """Set up."""
         cls.storage = storage
-
-
-    def setUp(self):
-        """
-        Create client.
-        """
         app_py.app.config['TESTING'] = True
-        self.client = app_py.app.test_client()
+        cls.client = app_py.app.test_client()
 
+    @classmethod
+    def tearDownClass(cls):
+        """Post Test."""
+        # clear the file.json
+        if os.path.isfile(TEST_PATH):
+            os.remove(TEST_PATH)
+ 
+    def setUp(self):
+        """Create client."""
         # reload data from database/file.json
         self.storage.reload()
-        if os.getenv('HBNB_TYPE_STORAGE') == 'db':
-            self.session = self.storage._DBStorage__session
-            self.objects = {}
-        else:
-            self.session = None
-            self.objects = self.storage.all()
 
     def tearDown(self):
         """Post clean up"""
@@ -69,6 +66,12 @@ class TestData:
         # clear TEST_PATH
         if os.path.isfile(TEST_PATH):
             os.remove(TEST_PATH)
+
+        # # clear the database
+        if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+            Base.metadata.drop_all(storage._DBStorage__engine)
+        else:
+            storage._FileStorage__objects = {}
 
         s1 = State(id=str(uuid.uuid4()), created_at=datetime.utcnow(),
                    updated_at=datetime.utcnow(), name="State_1")
@@ -151,8 +154,12 @@ class TestData:
                     user_id=u2.id, text="review_5")
         
         self.objects = (
-            s1, s2, u1, u2, u3, c1, c2, c3, a1, a2, a3, a4, a5, p1, p2,
-            p3, p4, p5, p6, r1, r2, r3, r4, r5
+            s1, s2,
+            u1, u2, u3,
+            c1, c2, c3,
+            a1, a2, a3, a4, a5,
+            p1, p2, p3, p4, p5, p6,
+            r1, r2, r3, r4, r5
         )
 
         self.save_objects(self.objects, storage_obj)

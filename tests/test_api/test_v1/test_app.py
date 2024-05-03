@@ -54,3 +54,13 @@ class TestApp(BaseTestCase):
         """Test that upon 404 status code is 404."""
         resp = self.client.get('/not_found')
         self.assertEqual(404, resp.status_code)
+
+    def test_cors(self):
+        """Test CORS."""
+        resp = self.client.get('/api/v1/status')
+        header = 'Access-Control-Allow-Origin'
+        if resp.headers.get('Access-Control-Allow-Origin') is None:
+            self.fail(f"Response Header {header} not found")
+            return
+        self.assertEqual(resp.headers.get(header), "0.0.0.0",
+                         msg="Response header {header} not '0.0.0.0'")

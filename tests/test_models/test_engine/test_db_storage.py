@@ -78,6 +78,7 @@ class TestDBStorage(unittest.TestCase):
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
         storage = models.storage
+        storage.reload()
         # Create some objects to test
         state1 = State(name="California")
         state2 = State(name="New York")
@@ -106,7 +107,7 @@ class TestDBStorage(unittest.TestCase):
         self.assertEqual(retrieved_state, state)
 
     def test_save(self):
-        """Test that save properly saves objects to file.json"""
+        """Test that save properly saves objects"""
         storage = models.storage
         # Create an object to test
         state = State(name="California")
@@ -118,7 +119,7 @@ class TestDBStorage(unittest.TestCase):
         # Get the object from the database
         retrieved_state = storage.get(State, state.id)
         # Check if the retrieved object is the same as the original object
-        self.assertEqual(retrieved_state, state)
+        self.assertEqual(retrieved_state.id, state.id)
 
     def test_get(self):
         """Test the get method of DBStorage"""

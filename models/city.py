@@ -8,14 +8,23 @@ from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 
-
 class City(BaseModel, Base):
     """Representation of city """
     if models.storage_t == "db":
         __tablename__ = 'cities'
         state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
         name = Column(String(128), nullable=False)
-        places = relationship("Place", backref="city", cascade="all, delete-orphan")
+        places = relationship("Place", backref="city",
+                              cascade="all, delete-orphan")
     else:
         state_id = ""
         name = ""
+
+    if models.storage_t != "db":
+        @property
+        def places(self):
+            places = []
+            for place in models.storage.all(models.place.Place).values():
+                if place.city_id == self.id:
+                    places.append(place)
+            return places

@@ -35,14 +35,6 @@ class TestIndex(BaseTestCase):
 
     def test_get_stats(self):
         """Test output of stats."""
-        from models.state import State
-        from models.city import City
-        from models.amenity import Amenity
-        from models.place import Place
-        from models.review import Review
-        from models.user import User
-        
         test_obj = TestData(self.storage)
-        
         resp = self.client.get('/api/v1/stats')
         self.assertEqual(resp.json, test_obj.counter)

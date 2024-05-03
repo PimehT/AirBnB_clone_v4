@@ -1,90 +1,90 @@
 #!/usr/bin/python3
-"""Test the api/v1/views/cities.py module."""
+"""Test the api/v1/views/amenities.py module."""
 import unittest
 import os
 import pycodestyle
 from tests.test_api.test_v1.base_test import BaseTestCase, TestData
-from api.v1.views import cities
-from models.city import City
+from api.v1.views import amenities
+from models.amenity import Amenity
 import json
 
 
-class TestCityDocs(unittest.TestCase):
-    """Checks that the documentation and style of cities.py."""
+class TestAmenityDocs(unittest.TestCase):
+    """Checks that the documentation and style of amenities.py."""
 
-    def test_pep8_conformance_cities(self):
-        """Test that api/v1/views/cities.py conforms to PEP8."""
+    def test_pep8_conformance_amenities(self):
+        """Test that api/v1/views/amenities.py conforms to PEP8."""
         pep8s = pycodestyle.StyleGuide(quiet=True)
-        result = pep8s.check_files(['api/v1/views/cities.py'])
+        result = pep8s.check_files(['api/v1/views/amenities.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
-    def test_cities_module_docstring(self):
-        """Test for the api/v1/views/cities.py module docstring"""
-        self.assertIsNot(cities.__doc__, None,
-                         "api/v1/views/cities.py needs a docstring")
-        self.assertTrue(len(cities.__doc__) >= 1,
-                        "api/v1/views/cities.py needs a docstring")
+    def test_amenities_module_docstring(self):
+        """Test for the api/v1/views/amenities.py module docstring"""
+        self.assertIsNot(amenities.__doc__, None,
+                         "api/v1/views/amenities.py needs a docstring")
+        self.assertTrue(len(amenities.__doc__) >= 1,
+                        "api/v1/views/amenities.py needs a docstring")
 
 
-class TestCity(BaseTestCase):
-    """Test the cities module."""
+class TestAmenity(BaseTestCase):
+    """Test the amenities module."""
 
     def setUp(self):
         """Create state obj which will have city."""
         super().setUp()
         self.test_data = TestData(self.storage)
-        self.state = self.test_data.get('State')[0]
+        self.amenity = self.test_data.get('Amenity')[0]
 
     def tearDown(self):
         """Destroy test_data."""
-        super().setUp()
-        del self.test_data
-        del self.state
+        try:
+            del self.test_data
+            del self.amenity
+        except AttributeError:
+            pass
+        super().tearDown()
 
-    def test_get_cities(self):
-        """Test route '/cities'."""
-        test_city_ids = [city.id for city in self.state.cities]
-        resp = self.client.get(f'/api/v1/states/{self.state.id}/cities')
+    def test_get_amenities(self):
+        """Test route '/amenities'."""
+        test_amenity_ids = [a.id for a in self.test_data.get('Amenity')]
+        resp = self.client.get('/api/v1/amenities')
         if resp.status_code != 200:
             return
-        resp_city_ids = [d['id'] for d in resp.json]
-        self.assertCountEqual(resp_city_ids, test_city_ids)
+        resp_amenity_ids = [d['id'] for d in resp.json]
+        self.assertCountEqual(resp_amenity_ids, test_amenity_ids)
 
-    def test_get_city_by_id_success(self):
-        """Test success of route '/states/<state_id>'."""
-        test_city_id = self.test_data.get('City')[0].id
-        resp = self.client.get(f"/api/v1/cities/{test_city_id}")
+    def test_get_amenity_by_id_success(self):
+        """Test success of route '/amenities/<amenity_id>'."""
+        resp = self.client.get(f"/api/v1/amenities/{self.amenity.id}")
         self.assertEqual(resp.status_code, 200)
 
-    def test_get_city_by_id_not_linked(self):
-        """Test fail of route '/states/<state_id>'."""
-        resp = self.client.get("/api/v1/cities/000")
+    def test_get_amenity_by_id_not_linked(self):
+        """Test fail of route '/amenities/<amenity_id>'."""
+        resp = self.client.get("/api/v1/amenities/000")
         self.assertEqual(resp.status_code, 404)
 
-    def test_delete_city_success(self):
-        """Test success delete city route."""
-        test_city_id = self.test_data.get('City')[0].id
-
-        resp = self.client.delete(f"/api/v1/cities/{test_city_id}")
+    def test_delete_amenity_success(self):
+        """Test success delete amenity route."""
+        resp = self.client.delete(f"/api/v1/amenities/{self.amenity.id}")
         self.assertEqual(len(resp.json), 0,
                          msg="Response.json should be an empty dictionary")
         self.assertIn(resp.status_code, [200, 204],
                       msg="Should return status code 200 or 204")
 
-        resp2 = self.client.get(f"/api/v1/cities/{test_city_id}")
+        resp2 = self.client.get(f"/api/v1/amenities/{self.amenity.id}")
         self.assertTrue(resp2.status_code, 404)
 
-    def test_delete_city_fail(self):
-        """Test fail delete city route."""
-        resp = self.client.delete("/api/v1/cities/000")
+    def test_delete_amenity_fail(self):
+        """Test fail delete amenity route."""
+        resp = self.client.delete("/api/v1/amenities/000")
         self.assertTrue(resp.status_code, 404)
 
-    def test_post_city_success(self):
-        """Test success post city route."""
+    def test_post_amenity_success(self):
+        """Test success post amenity route."""
         headers = {"Content-Type": "application/json"}
-        data = {"name": "Lagos"}
-        resp = self.client.post(f'/api/v1/states/{self.state.id}/cities',
+        data = {"name": "Fridge"}
+        resp = self.client.post('/api/v1/amenities/',
                                 headers=headers,
                                 data=json.dumps(data))
         self.assertEqual(resp.status_code, 201,
@@ -101,35 +101,34 @@ class TestCity(BaseTestCase):
         if "name" not in resp.json:
             self.fail("name key not in response.json")
             return
-        self.assertEqual(resp.json["name"], "Lagos",
-                         msg="name != Lagos")
+        self.assertEqual(resp.json["name"], "Fridge",
+                         msg="name != Fridge")
 
-    def test_post_city_fail_not_a_json(self):
+    def test_post_amenity_fail_not_a_json(self):
         """Test that when HTTP body request is not valid JSON, return 400"""
         headers = {"Content-Type": "application/json"}
-        resp = self.client.post(f'/api/v1/states/{self.state.id}/cities',
+        resp = self.client.post('/api/v1/amenities/',
                                 headers=headers, data=None)
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(resp.json, {'error': "Not a JSON"},
                          msg='Response.json is not {"error": "Not a JSON"}')
 
-    def test_post_city_fail_does_not_contain_a_key(self):
+    def test_post_amenity_fail_does_not_contain_a_key(self):
         """Test that when dictionary doesnt contain key name, raise a 400"""
         headers = {"Content-Type": "application/json"}
-        data = {"not_name": "Random state"}
-        resp = self.client.post(f'/api/v1/states/{self.state.id}/cities',
+        data = {"not_name": "Random name"}
+        resp = self.client.post(f'/api/v1/amenities',
                                 headers=headers,
                                 data=json.dumps(data))
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(resp.json, {'error': "Missing name"},
                          msg='Response.json is not {"error": "Missing name"}')
 
-    def test_put_city_success(self):
+    def test_put_amenity_success(self):
         """Test post city success."""
-        test_city = self.test_data.get('City')[0]
         headers = {"Content-Type": "application/json"}
-        data = {"name": "Lagos is so cool"}
-        resp = self.client.put(f'/api/v1/cities/{test_city.id}',
+        data = {"name": "Fridge is so cool"}
+        resp = self.client.put(f'/api/v1/amenities/{self.amenity.id}',
                                headers=headers,
                                data=json.dumps(data))
 
@@ -138,29 +137,27 @@ class TestCity(BaseTestCase):
 
         if not resp.json or resp.json.get("name") is None:
             return
-        self.assertEqual(resp.json["name"], "Lagos is so cool",
+        self.assertEqual(resp.json["name"], "Fridge is so cool",
                          msg="attr 'name' was not updated")
 
-    def test_put_city_fail_not_a_json(self):
+    def test_put_amenity_fail_not_a_json(self):
         """Test that when HTTP body request is not valid JSON, raise 400"""
-        test_city = self.test_data.get('City')[0]
         headers = {"Content-Type": "application/json"}
-        resp = self.client.put(f'/api/v1/cities/{test_city.id}',
+        resp = self.client.put(f'/api/v1/amenities/{self.amenity.id}',
                                headers=headers, data=None)
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(resp.json, {'error': "Not a JSON"},
                          msg='Response.json is not {"error": "Not a JSON"}')
 
-    def test_put_city_ignore_keys(self):
+    def test_put_amenity_ignore_keys(self):
         """Test that put city ignores keys: id, created_at and updated_at"""
-        test_city = self.test_data.get('City')[0]
         headers = {"Content-Type": "application/json"}
         data = {
             "id": "1a9c29c7-e39c-4840-b5f9-74310b34f269",
             "created_at": "2017-04-14T16:21:42",
             "updated_at": "2017-04-14T16:21:42"
         }
-        resp = self.client.put(f'/api/v1/cities/{test_city.id}',
+        resp = self.client.put(f'/api/v1/amenities/{self.amenity.id}',
                                headers=headers, data=json.dumps(data))
 
         self.assertEqual(resp.status_code, 200,
