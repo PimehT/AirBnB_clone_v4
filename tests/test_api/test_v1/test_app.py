@@ -32,7 +32,7 @@ class TestAppDocs(unittest.TestCase):
 
 class TestApp(BaseTestCase):
     """Test the App module."""
-    
+
     def test_response_code_success(self):
         """Test that upon success, 200 is returned."""
         resp = self.client.get('/api/v1/status')
@@ -44,7 +44,7 @@ class TestApp(BaseTestCase):
         resp = self.client.get('/api/v1/status')
         self.assertTrue(resp.is_json)
         self.assertEqual(resp.headers.get('Content-Type'), "application/json")
-    
+
     def test_error_handler_404_response(self):
         """Test 404 error."""
         resp = self.client.get('/not_found')

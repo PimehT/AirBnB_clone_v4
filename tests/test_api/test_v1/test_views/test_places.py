@@ -147,8 +147,8 @@ class TestPlace(BaseTestCase):
                                 headers=headers,
                                 data=json.dumps(data))
         self.assertEqual(resp.status_code, 400)
-        self.assertEqual(resp.json, {'error': "Missing user_id"},
-                         msg='Response.json is not {"error": "Missing user_id"}')
+        msg = 'Response.json is not {"error": "Missing user_id"}'
+        self.assertEqual(resp.json, {'error': "Missing user_id"}, msg=msg)
 
     def test_put_place_success(self):
         """Test put place success."""

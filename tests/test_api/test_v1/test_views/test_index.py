@@ -6,6 +6,7 @@ import pycodestyle
 from tests.test_api.test_v1.base_test import BaseTestCase, TestData
 from api.v1.views import index
 
+
 class TestIndexDocs(unittest.TestCase):
     """Checks that the documentation and style of index.py."""
 

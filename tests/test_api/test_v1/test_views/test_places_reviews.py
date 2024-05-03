@@ -108,7 +108,7 @@ class TestReview(BaseTestCase):
                     self.fail(f"{k} key not in response.json")
                 continue
                 self.assertEqual(resp.json[k], v,
-                         msg=f'{k} != {v}')
+                                 msg=f'{k} != {v}')
 
     def test_post_review_fail_not_a_json(self):
         """Test that when HTTP body request is not valid JSON, return 400"""
@@ -130,7 +130,7 @@ class TestReview(BaseTestCase):
                                 headers=headers,
                                 data=json.dumps(data))
         self.assertEqual(resp.status_code, 404,
-                        msg="Should raise 404 error")
+                         msg="Should raise 404 error")
 
     def test_post_review_fail_does_not_contain_text(self):
         """Test that when dictionary doesnt contain key text, raise a 400"""
@@ -157,8 +157,8 @@ class TestReview(BaseTestCase):
                                 headers=headers,
                                 data=json.dumps(data))
         self.assertEqual(resp.status_code, 400)
-        self.assertEqual(resp.json, {'error': "Missing user_id"},
-                         msg='Response.json is not {"error": "Missing user_id"}')
+        msg = 'Response.json is not {"error": "Missing user_id"}'
+        self.assertEqual(resp.json, {'error': "Missing user_id"}, msg=msg)
 
     def test_post_review_fail_user_id_not_linked(self):
         """Test when user_id is not linked to any User object, raise 404"""
@@ -171,7 +171,7 @@ class TestReview(BaseTestCase):
                                 headers=headers,
                                 data=json.dumps(data))
         self.assertEqual(resp.status_code, 404,
-                        msg="Should raise 404 error")
+                         msg="Should raise 404 error")
 
     def test_put_review_success(self):
         """Test put review success."""
