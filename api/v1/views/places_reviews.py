@@ -42,8 +42,8 @@ def create_review(place_id):
     place = storage.get(Place, place_id)
     if place is None:
         return jsonify({"error": "Not found"}), 404
-    data = request.get_json(silent=True)
-    if not isinstance(data, dict):
+    data = request.get_json()
+    if data is None:
         return jsonify({"error": "Not a JSON"}), 400
     if 'user_id' not in data:
         return jsonify({"error": "Missing user_id"}), 400
@@ -63,8 +63,8 @@ def update_review(review_id):
     review = storage.get(Review, review_id)
     if review is None:
         return jsonify({"error": "Not found"}), 404
-    data = request.get_json(silent=True)
-    if not isinstance(data, dict):
+    data = request.get_json()
+    if data is None:
         return jsonify({"error": "Not a JSON"}), 400
     checker = ['id', 'user_id', 'place_id', 'created_at', 'updated_at']
     for key, value in data.items():
