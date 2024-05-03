@@ -44,8 +44,8 @@ def create_place(city_id):
     city = storage.get(City, city_id)
     if city is None:
         return jsonify({"error": "Not found"}), 404
-    data = request.get_json()
-    if data is None:
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
         return jsonify({"error": "Not a JSON"}), 400
     if 'user_id' not in data:
         return jsonify({"error": "Missing user_id"}), 400
@@ -65,8 +65,8 @@ def update_place(place_id):
     place = storage.get(Place, place_id)
     if place is None:
         return jsonify({"error": "Not found"}), 404
-    data = request.get_json()
-    if data is None:
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
         return jsonify({"error": "Not a JSON"}), 400
     checker = ['id', 'user_id', 'city_id', 'created_at', 'updated_at']
     for key, value in data.items():

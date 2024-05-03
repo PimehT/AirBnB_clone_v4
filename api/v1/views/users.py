@@ -33,8 +33,8 @@ def delete_user(user_id):
 
 @app_views.route('/users', strict_slashes=False, methods=['POST'])
 def create_user():
-    data = request.get_json()
-    if data is None:
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
         return jsonify({"error": "Not a JSON"}), 400
     if 'email' not in data:
         return jsonify({"error": "Missing email"}), 400
@@ -50,8 +50,8 @@ def update_user(user_id):
     user = storage.get(User, user_id)
     if user is None:
         return jsonify({"error": "Not found"}), 404
-    data = request.get_json()
-    if data is None:
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
         return jsonify({"error": "Not a JSON"}), 400
     for key, value in data.items():
         if key not in ['id', 'email', 'created_at', 'updated_at']:
