@@ -10,12 +10,12 @@ import uuid
 app = Flask(__name__)
 
 
-@app.route('/0-hbnb/', strict_slashes=False)
+@app.route('/1-hbnb/', strict_slashes=False)
 def filters():
     """display a HTML page like 8-index.html from static"""
     states = storage.all("State").values()
     amenities = storage.all("Amenity").values()
-    return render_template('0-hbnb.html', states=states,
+    return render_template('1-hbnb.html', states=states,
                            amenities=amenities, cache_id=uuid.uuid4())
 
 
@@ -25,4 +25,4 @@ def teardown_db(exception):
     storage.close()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='5001')
+    app.run(host='0.0.0.0', port='5001', debug=True)
