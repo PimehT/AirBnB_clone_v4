@@ -6,6 +6,7 @@
     border-radius: 4px;
     display: flex;
     align-items: center;
+    z-index: 1;
 }
 
 section.filters > button{
