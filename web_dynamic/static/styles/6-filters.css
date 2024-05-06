@@ -97,3 +97,8 @@ section.filters > button:hover {
 .amenities > .popover > li > input {
     margin-right: 10px;
 }
+
+.amenities > h4 {
+    max-height: 30px;
+    overflow: hidden;
+}

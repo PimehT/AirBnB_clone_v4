@@ -110,13 +110,10 @@ def places_search():
 
     # filter by amenity
     if len(amenities) > 0:
-        place_list = []
-        for place in places:
-            for place_amenity in place.amenities:
-                if place_amenity.id in amenities:
-                    place_list.append(place.to_dict())
-                    break
-    else:
-        place_list = [place.to_dict() for place in places]
+        amenities_objs = [storage.get(Amenity, amenity_id)
+                          for amenity_id in amenities]
+        places = [place for place in places
+                  if all(amenity in [a.id for a in place.amenities]
+                         for amenity in amenities_objs)]
 
-    return jsonify(place_list), 200
+    return jsonify([place.to_dict() for place in places]), 200

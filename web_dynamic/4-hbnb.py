@@ -10,12 +10,12 @@ import uuid
 app = Flask(__name__)
 
 
-@app.route('/3-hbnb/', strict_slashes=False)
+@app.route('/4-hbnb/', strict_slashes=False)
 def filters():
     """display a HTML page like 8-index.html from static"""
     states = storage.all("State").values()
     amenities = storage.all("Amenity").values()
-    return render_template('3-hbnb.html', states=states,
+    return render_template('4-hbnb.html', states=states,
                            amenities=amenities, cache_id=uuid.uuid4())
 
 
