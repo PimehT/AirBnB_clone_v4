@@ -55,23 +55,23 @@ $(document).ready(function () {
       });
 
       $('button').click(function () {
-        console.log("Button clicked"); // Debugging statement
+        console.log('Button clicked'); // Debugging statement
         const amenityIds = Object.keys(amenities);
-        console.log("Amenity IDs:", amenityIds); // Debugging statement
-        console.log(typeof(amenityIds)); // Debugging statement
+        console.log('Amenity IDs:', amenityIds); // Debugging statement
+        console.log(typeof (amenityIds)); // Debugging statement
         $.ajax({
           url: 'http://localhost:5001/api/v1/places_search/',
           type: 'POST',
           data: JSON.stringify({ states: [], cities: [], amenities: amenityIds }),
           contentType: 'application/json',
           success: function (data) {
-            console.log("AJAX request successful"); // Debugging statement
+            console.log('AJAX request successful'); // Debugging statement
             console.log('Received response:', data); // Debugging statement
             console.log(JSON.stringify(data)); // Debugging statement
             $('section.places').empty();
             data.forEach(function (place) {
               const user = userData[place.user_id];
-              console.log("User:", user); // Debugging statement
+              console.log('User:', user); // Debugging statement
               const article = $('<article></article>');
               const title = $(`<h2>${place.name}</h2>`);
               const price = $(`<div class="price_by_night"><p>$${place.price_by_night}</p></div>`);
@@ -86,8 +86,8 @@ $(document).ready(function () {
             });
           },
           error: function (xhr, status, error) {
-            console.log("AJAX request failed"); // Debugging statement
-            console.log("Error:", error); // Debugging statement
+            console.log('AJAX request failed'); // Debugging statement
+            console.log('Error:', error); // Debugging statement
           }
         });
       });
