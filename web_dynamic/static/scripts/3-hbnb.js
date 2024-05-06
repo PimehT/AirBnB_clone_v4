@@ -22,16 +22,37 @@ $(document).ready(function () {
     }
   });
 
-  $.post('http://localhost:5001/api/v1/places_search/', '{}', function (data, status) {
-    data.forEach(function (place) {
-      const article = $('<article></article>');
-      const title = $('<div class="title"></div>').append('<h2>' + place.name + '</h2>');
-      const price = $('<div class="price_by_night"></div>').text('$' + place.price_by_night);
-      const info = $('<div class="information"></div>').append('<div class="max_guest">' + place.max_guest + ' Guest' + (place.max_guest !== 1 ? 's' : '') + '</div>').append('<div class="number_rooms">' + place.number_rooms + ' Bedroom' + (place.number_rooms !== 1 ? 's' : '') + '</div>').append('<div class="number_bathrooms">' + place.number_bathrooms + ' Bathroom' + (place.number_bathrooms !== 1 ? 's' : '') + '</div>');
-      const description = $('<div class="description"></div>').text(place.description);
-      article.append(title).append(price).append(info).append(description);
-      $('section.places').append(article);
-    });
+  $.ajax({
+    url: 'http://localhost:5001/api/v1/users/',
+    type: 'GET',
+    success: function (users) {
+      const userData = {};
+      users.forEach(function (user) {
+        userData[user.id] = user;
+      });
+
+      $.ajax({
+        url: 'http://localhost:5001/api/v1/places_search/',
+        type: 'POST',
+        data: JSON.stringify({ states: [], cities: [], amenities: [] }),
+        contentType: 'application/json',
+        success: function (data) {
+          data.forEach(function (place) {
+            const user = userData[place.user_id];
+            const article = $('<article></article>');
+            const title = $(`<h2>${place.name}</h2>`);
+            const price = $(`<div class="price_by_night"><p>$${place.price_by_night}</p></div>`);
+            const info = $('<div class="information"></div>')
+              .append(`<div class="max_guest"><div class="guest_image"></div>${place.max_guest} Guest${place.max_guest !== 1 ? 's' : ''}</div>`)
+              .append(`<div class="number_rooms"><div class="bed_image"></div>${place.number_rooms} Bedroom${place.number_rooms !== 1 ? 's' : ''}</div>`)
+              .append(`<div class="number_bathrooms"><div class="bath_image"></div>${place.number_bathrooms} Bathroom${place.number_bathrooms !== 1 ? 's' : ''}</div>`);
+            const users = $(`<div class="user"><p><b>Owner:</b> ${place.user_id ? `${user.first_name} ${user.last_name}` : 'Loading'}</p></div>`);
+            const description = $(`<div class="description">${place.description}</div>`);
+            article.append(title).append(price).append(info).append(users).append(description);
+            $('section.places').append(article);
+          });
+        }
+      });
+    }
   });
 });
-  

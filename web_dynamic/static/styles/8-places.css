@@ -29,7 +29,9 @@
 .places > article > h2 {
     font-size: 30px;
     margin: 0 0 0 0;
-    align-self: center;
+    align-self: left;
+    text-wrap: wrap;
+    max-width: 80%;
 }
 
 .price_by_night {
@@ -99,7 +101,7 @@
 
 .user > p {
     margin-top: 20px;
-    margin-bottom: 0px;
+    margin-bottom: 5px;
 }
 .description > p {
     margin-top: 7px;
